@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+ <data>
+    <record id="view_garista_garista_tree" model="ir.ui.view">
+        <field name="name">garista.garista.tree</field>
+        <field name="model">garista.garista</field>
+        <field name="arch" type="xml">
+            <tree string="Garista App">
+                <field name="name" />
+                <field name="api_email"/>
+                <field name="message" />
+                <field name="user_first_name"/>
+                <field name="user_last_name" />
+                <field name="user_restos_id"/>
+                <field name="status"/>
+                <field name="last_disconnect_timestamp"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_garista_garista_form" model="ir.ui.view">
+        <field name="name">garista.garista.form</field>
+        <field name="model">garista.garista</field>
+        <field name="arch" type="xml">
+            <form string="Garista App">
+                <header>
+		            <button string="Connect App" type="object" name="action_connect_app" class="oe_highlight"/>
+                    <button string="Sync Items" type="object" name="execute_all_methods" class="oe_highlight"/>
+                    <!-- <button string="Get Dishes" type="object" name="get_dishes_pos" class="oe_highlight"/>
+                    <button string="Get Drinks" type="object" name="get_drinks_pos" class="oe_highlight"/> -->
+                    <button string="Get Tables" type="object" name="get_tables" class="oe_highlight"/>
+                    <button string="Get Status" type="object" name="update_garista_status" class="oe_highlight"/>
+                    
+                </header>
+		        <sheet>
+                    <group>
+                        <field name="api_email"/>
+                        <field name="api_password" password="True"/>
+                        <field name="token"/>
+                    </group>
+                     <group>
+                        <field name="use_existing_restaurant"/>
+                        <field name="restaurant_id" invisible="not use_existing_restaurant"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="my_model_action" model="ir.actions.act_window">
+        <field name="name">Garista</field>
+        <field name="res_model">garista.garista</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_my_model_root" name="Garista App" sequence="1" web_icon="garista,static/description/icon.png"/>
+    <menuitem id="menu_my_model" parent="menu_my_model_root" action="my_model_action" name="Garista Login" sequence="2"/>
+ </data>
+</odoo>

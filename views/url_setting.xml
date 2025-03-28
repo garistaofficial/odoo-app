@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <!-- Add Custom Field in the Settings Tab -->
+        <record id="view_res_config_settings_form" model="ir.ui.view">
+            <field name="name">res.config.settings.form.inherited</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="15"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app data-string="Garista" string="Garista " name="garista" logo="/base/static/description/modules.png">
+                        <block title="Garista API Settings" name="garista_api">
+                            <setting string="API URL"
+                                        help="Type API endpoint"
+                                        id="garista_api_setting">
+                                <field name="api_url"/>
+                            </setting>
+                        </block>
+                    </app>
+                </xpath>
+            </field>
+        </record>
+         <record id="action_custom_api_url_settings" model="ir.actions.act_window">
+            <field name="name">Custom API Settings</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_res_config_settings_form"/>
+            <field name="target">new</field>
+        </record>
+        <!-- Add menu item for your custom setting -->
+        <!-- <menuitem id="menu_custom_api_url_settings"
+                  name="Custom Settings"
+                  parent="base.menu_administration"
+                  action="action_custom_api_url_settings"/> -->
+
+        <!-- Create an action for the custom settings page -->
+       
+    </data>
+</odoo>

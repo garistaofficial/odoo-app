@@ -1,0 +1,129 @@
+<odoo>
+    <data>
+        <record id="product_pos_category_tree_view_inherit" model="ir.ui.view">
+            <field name="name">pos.category.tree.inherit</field>
+            <field name="model">pos.category</field>
+            <field name="inherit_id" ref="point_of_sale.product_pos_category_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="garista_category_id"/>
+                </xpath>
+            </field>
+        </record>
+
+         <record id="product_pos_category_form_view_inherit" model="ir.ui.view">
+            <field name="name">pos.category.form.inherit</field>
+            <field name="model">pos.category</field>
+            <field name="inherit_id" ref="point_of_sale.product_pos_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="garista_category_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_pos_tree_view_inherit" model="ir.ui.view">
+            <field name="name">product.template.tree.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="garista_product_id"/>
+                </xpath>
+            </field>
+        </record>
+
+         <record id="product_pos_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="garista_product_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit POS Config Tree View -->
+        <record id="view_pos_config_tree_inherited" model="ir.ui.view">
+            <field name="name">pos.config.tree.view.inherited</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_config_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="garista_restaurant_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit POS Config Form View -->
+        <record id="view_pos_config_form_inherited" model="ir.ui.view">
+            <field name="name">pos.config.form.view.inherited</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="garista_restaurant_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    
+         <!-- Inherit POS Config Tree View -->
+        <record id="view_product_attribute_tree_inherited" model="ir.ui.view">
+            <field name="name">product.attribute.tree.view.inherited</field>
+            <field name="model">product.attribute</field>
+            <field name="inherit_id" ref="product.attribute_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="garista_attribute_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit POS Config Form View -->
+        <record id="view_product_attribute_form_inherited" model="ir.ui.view">
+            <field name="name">product.attribute.form.view.inherited</field>
+            <field name="model">product.attribute</field>
+            <field name="inherit_id" ref="product.product_attribute_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="garista_attribute_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="view_pos_order_tree_inherited" model="ir.ui.view">
+            <field name="name">pos.order.tree.view.inherited</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="garista_order_id"/>
+                    <field name="is_Sync"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_pos_order_form_inherited" model="ir.ui.view">
+            <field name="name">pos.order.form.view.inherited</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group>
+                        <field name="garista_order_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    
+    </data>
+</odoo>
