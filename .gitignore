@@ -1,0 +1,43 @@
+# Byte-compiled / cached files
+*.pyc
+*.pyo
+__pycache__/
+
+# Odoo log files
+*.log
+odoo.log
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*~ 
+.DS_Store
+
+# Compiled / Minified assets
+*.min.js
+*.min.css
+*.map
+
+# Node.js / npm packages (if used)
+node_modules/
+
+# Python virtual environment (if used)
+venv/
+.env
+
+# Ignore database dump files
+*.sql
+*.sqlite
+*.bak
+
+# Ignore static files that shouldn't be uploaded
+static/description/*.png
+static/description/*.jpg
+static/description/*.gif
+
+# Ignore Odoo development files
+addons/
+odoo-bin
+odoo.conf
+odoo.service
