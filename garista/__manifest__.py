@@ -51,4 +51,7 @@ Features:
     # Installation settings
     'installable': True,
     'application': True,
+    'external_dependencies': {
+        'python': ['tzlocal'],
+    },
 }
