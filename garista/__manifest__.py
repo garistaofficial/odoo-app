@@ -14,7 +14,7 @@ Features:
     'website': "https://www.garista.net/",
     'category': 'Point of Sale',
     'support': 'hello@garista.com',
-    'version': '1.0.1.0.0',
+    'version': '1.0',
     
     # Web icon for the dashboard
     'icon': '/garista/static/description/icon.png',
