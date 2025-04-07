@@ -26,10 +26,11 @@
                 <header>
 		            <button string="Connect App" type="object" name="action_connect_app" class="oe_highlight"/>
                     <button string="Sync Items" type="object" name="execute_all_methods" class="oe_highlight"/>
+                    <!-- <button string="Get Dishes" type="object" name="get_dishes_pos" class="oe_highlight"/> -->
                     <!-- <button string="Get Dishes" type="object" name="get_dishes_pos" class="oe_highlight"/>
                     <button string="Get Drinks" type="object" name="get_drinks_pos" class="oe_highlight"/> -->
                     <button string="Get Tables" type="object" name="get_tables" class="oe_highlight"/>
-                    <button string="Get Status" type="object" name="update_garista_status" class="oe_highlight"/>
+                    <!-- <button string="Get Status" type="object" name="update_garista_status" class="oe_highlight"/> -->
                     
                 </header>
 		        <sheet>

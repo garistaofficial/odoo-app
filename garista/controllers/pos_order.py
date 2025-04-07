@@ -2,6 +2,8 @@ from odoo import http
 from odoo.http import request
 import json
 from datetime import datetime
+# from odoo.addons.bus.controllers.main import BusController
+# from odoo.addons.bus.models.bus import dispatch
 
 class PosOrderController(http.Controller):
 
@@ -71,13 +73,21 @@ class PosOrderController(http.Controller):
             'amount_paid': data.get('amount_paid', 0),
             'amount_return': data.get('amount_return', 0),
             'create_date': create_date,
-            'garista_order_id': garista_order_id
+            'garista_order_id': garista_order_id,
+            'is_Sync': True
         }
         pos_order = request.env['pos.order'].sudo().create(order_vals)
         
         # Create Order Lines
         self._create_order_lines(pos_order, pos_order_lines)
-        
+
+        # channel = f'pos_order_sync_table_{table.id}'
+        # request.env['bus.bus'].sendone(channel, {
+        #     'message': 'new_order',
+        #     'table_id': table.id,
+        #     'order_id': pos_order.id,
+        #     'order_reference': pos_order.pos_reference,
+        # })
         return {'status': 'success', 'message': 'POS Order created successfully!', 'pos_order_id': pos_order.id}
 
     def _generate_pos_reference(self, last_orders):

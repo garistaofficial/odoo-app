@@ -24,8 +24,8 @@ Features:
     
     # Assets for backend functionality
     'assets': {
-        'web.assets_backend': [
-            'garista/static/src/js/garista_form.js',
+        'point_of_sale._assets_pos': [
+            'garista/static/src/js/pos_order_sync.js',
         ],
     },
     

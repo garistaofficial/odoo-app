@@ -81,27 +81,46 @@ class GaristaProductController(http.Controller):
 
             image_url = image_base_url + product_image
             response = requests.get(image_url)
+            product_template_vals = {
+                'name': product_name,
+                'list_price': product_price,
+                'garista_product_id': product_id,
+                'available_in_pos': True,
+            }
+
+            # Add image if response is 200
             if response.status_code == 200:
                 image_base64 = base64.b64encode(response.content)
-                if existing_category:
-                    product_template = request.env['product.template'].sudo().create({
-                        'name': product_name,
-                        'pos_categ_ids': [(6, 0, [existing_category.id])],
-                        'list_price': product_price,
-                        'garista_product_id': product_id,
-                        'available_in_pos': True,
-                        'image_1920': image_base64,
-                    })
-                    print(product_template, "Product has been Created")
-                else:
-                    product_template = request.env['product.template'].sudo().create({
-                        'name': product_name,
-                        'image_1920': image_base64,
-                        'list_price': product_price,
-                        'garista_product_id': product_id,
-                        'available_in_pos': True,
-                    })
-                    print(product_template, "Product has been Created")
+                product_template_vals['image_1920'] = image_base64
+
+            # Add category if exists
+            if existing_category:
+                product_template_vals['pos_categ_ids'] = [(6, 0, [existing_category.id])]
+
+            # Create product
+            product_template = request.env['product.template'].sudo().create(product_template_vals)
+            print(product_template, "Product has been Created")
+            # if response.status_code == 200:
+            #     image_base64 = base64.b64encode(response.content)
+            #     if existing_category:
+            #         product_template = request.env['product.template'].sudo().create({
+            #             'name': product_name,
+            #             'pos_categ_ids': [(6, 0, [existing_category.id])],
+            #             'list_price': product_price,
+            #             'garista_product_id': product_id,
+            #             'available_in_pos': True,
+            #             'image_1920': image_base64,
+            #         })
+            #         print(product_template, "Product has been Created")
+            #     else:
+            #         product_template = request.env['product.template'].sudo().create({
+            #             'name': product_name,
+            #             'image_1920': image_base64,
+            #             'list_price': product_price,
+            #             'garista_product_id': product_id,
+            #             'available_in_pos': True,
+            #         })
+            #         print(product_template, "Product has been Created")
 
             if product_isVariant == 1:
                 for extravariant in product_data.get("extravariants", []):
@@ -195,11 +214,20 @@ class GaristaProductController(http.Controller):
             except Exception as e:
                 return {'status': 'error', 'message': str(e)}
 
+        # product_template_vals = {
+        #     'name': product_name,
+        #     'list_price': product_price,
+        #     'image_1920': image_base64,
+        # }
+        # Build product template values
         product_template_vals = {
             'name': product_name,
             'list_price': product_price,
-            'image_1920': image_base64,
         }
+
+        # Add image if available
+        if image_base64:
+            product_template_vals['image_1920'] = image_base64
 
         if product_category_id:
             existing_category = request.env['pos.category'].sudo().search([('garista_category_id', '=', product_category_id)], limit=1)

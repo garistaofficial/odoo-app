@@ -160,28 +160,55 @@ class garista(models.Model):
                 }
                 self.write(model_vals)
 
+                # try:
+                #     # ✅ Create a user in Odoo
+                #     user_vals = {
+                #         'name': model_vals['user_username'],
+                #         'login': model_vals['api_email'],
+                #         'groups_id': [(6, 0, [
+                #             self.env.ref('base.group_user').id,  # Internal User
+                #             self.env.ref('point_of_sale.group_pos_manager').id  # POS Administrator
+                #         ])],
+                #     }
+                #     self.env['res.users'].sudo().create(user_vals)
+                # except Exception as e:
+                #     return {
+                #         'type': 'ir.actions.client',
+                #         'tag': 'display_notification',
+                #         'params': {
+                #             'title': 'User Creation Error',
+                #             'message': f"Failed to create user: {str(e)}",
+                #             'type': 'danger',
+                #             'sticky': True,
+                #         }
+                #     }
+
                 try:
-                    # ✅ Create a user in Odoo
-                    user_vals = {
-                        'name': model_vals['user_username'],
-                        'login': model_vals['api_email'],
-                        'groups_id': [(6, 0, [
-                            self.env.ref('base.group_user').id,  # Internal User
-                            self.env.ref('point_of_sale.group_pos_manager').id  # POS Administrator
-                        ])],
-                    }
-                    self.env['res.users'].sudo().create(user_vals)
-                except Exception as e:
-                    return {
-                        'type': 'ir.actions.client',
-                        'tag': 'display_notification',
-                        'params': {
-                            'title': 'User Creation Error',
-                            'message': f"Failed to create user: {str(e)}",
-                            'type': 'danger',
-                            'sticky': True,
+                    # ✅ Check if user already exists by either login (email) or name
+                    existing_user = self.env['res.users'].sudo().search([
+                        '|',  # 'or' condition in Odoo domain
+                        ('login', '=', model_vals['api_email']),  # Check by login (email)
+                        ('name', '=', model_vals['user_username'])  # Check by name
+                    ], limit=1)
+
+                    if existing_user:
+                        print(f"User with email {model_vals['api_email']} or username {model_vals['user_username']} already exists.")
+                    else:
+                        # ✅ Create a user in Odoo if not exists
+                        user_vals = {
+                            'name': model_vals['user_username'],
+                            'login': model_vals['api_email'],
+                            'groups_id': [(6, 0, [
+                                self.env.ref('base.group_user').id,  # Internal User
+                                self.env.ref('point_of_sale.group_pos_manager').id  # POS Administrator
+                            ])],
                         }
-                    }
+                        self.env['res.users'].sudo().create(user_vals)
+                        print(f"User {model_vals['api_email']} with username {model_vals['user_username']} created successfully.")
+                    
+                except Exception as e:
+                    print(f"Failed to create user: {str(e)}")
+
 
                 # ✅ Handle POS Config Creation
                 if not self.restaurant_id:
@@ -315,7 +342,7 @@ class garista(models.Model):
 
             for product in products:
                 product_id = product.get('id')
-
+                print("product_id is ",product_id)
                 # Check if product already exists
                 existing_product = self.env['product.template'].sudo().search([
                     ('garista_product_id', '=', product_id)
@@ -340,23 +367,45 @@ class garista(models.Model):
                     ('garista_category_id', '=', product_category_id)
                 ], limit=1)
 
+                product_template_vals = {
+                    'name': product_name,
+                    'list_price': product_price,
+                    'garista_product_id': product_id,
+                    'available_in_pos': True,
+                }
+
+                # Assign category if exists
+                if existing_category:
+                    product_template_vals['pos_categ_ids'] = [(6, 0, [existing_category.id])]
+
+                # Try to get image
                 if response.status_code == 200:
                     image_base64 = base64.b64encode(response.content)
-                    product_template_vals = {
-                        'name': product_name,
-                        'list_price': product_price,
-                        'garista_product_id': product_id,
-                        'available_in_pos': True,
-                        'image_1920': image_base64,
-                    }
+                    product_template_vals['image_1920'] = image_base64
 
-                    if existing_category:
-                        product_template_vals['pos_categ_ids'] = [(6, 0, [existing_category.id])]
+                # Create product
+                product_template = self.env['product.template'].sudo().create(product_template_vals)
 
-                    product_template = self.env['product.template'].sudo().create(product_template_vals)
-
+                # Create variants if needed
                 if product_isVariant == 1:
                     self.create_product_variants(product, product_template)
+                
+                # if response.status_code == 200:
+                #     image_base64 = base64.b64encode(response.content)
+                #     product_template_vals = {
+                #         'name': product_name,
+                #         'list_price': product_price,
+                #         'garista_product_id': product_id,
+                #         'available_in_pos': True,
+                #         'image_1920': image_base64,
+                #     }
+
+                #     if existing_category:
+                #         product_template_vals['pos_categ_ids'] = [(6, 0, [existing_category.id])]
+
+                #     product_template = self.env['product.template'].sudo().create(product_template_vals)
+                # if product_isVariant == 1:
+                #     self.create_product_variants(product, product_template)
 
             return new_products_count  # Return the count of new products
 
@@ -440,11 +489,9 @@ class garista(models.Model):
             drinks = self.fetch_items_from_api("drinks-resto/")
             if 'error' in drinks:
                 return drinks
-            
             extracted_data = self.process_items(drinks)
             if extracted_data:
                 new_products_count = self.create_garista_pos_product(extracted_data)
-                
                 if new_products_count == -1:
                     return self.display_notification("Error", "An error occurred while creating drinks.", "danger")
                 elif new_products_count > 0:
@@ -602,7 +649,6 @@ class garista(models.Model):
                 }
             }
 
-   
 
     def display_notification(self, title, message, notification_type):
         return {
@@ -615,9 +661,6 @@ class garista(models.Model):
                 'sticky': True,
             }
         }
-    
-    
-   
      
     def get_dishes_category(self):
         api_url = self.env['ir.config_parameter'].sudo().get_param('garista.api_url')
@@ -670,9 +713,9 @@ class garista(models.Model):
                     'type': 'ir.actions.client',
                     'tag': 'display_notification',
                     'params': {
-                        'title': 'Error',
+                        'title': 'Success',
                         'message': 'API connection successful and Sync Complete!',
-                        'type': 'danger',
+                        'type': 'success',
                         'sticky': True,
                     }
                  }  
@@ -708,8 +751,7 @@ class garista(models.Model):
                     'sticky': True,
                 }
         }
-    
-                    
+             
     def get_parent_category(self, category_name): 
         if category_name in ['dish', 'both']:
             category_names = ['Food', 'Foods', 'food']
@@ -751,7 +793,7 @@ class garista(models.Model):
             category = self.env['pos.category'].create(category_vals)
             print("Category has been created",category.id)
         
-    @api.model
+    # @api.model
     def update_garista_status(self):
         """Fetch status from API and update the status field."""
         endpoint = "restos/"
@@ -903,9 +945,54 @@ class garista(models.Model):
     #         print("No need to update")
 
     
+    # def execute_all_methods(self):
+    #     for method in [self.get_dishes_category, self.get_dishes_pos, self.get_drinks_pos]:
+    #         try:
+    #             method()  # Call the method
+    #         except Exception:
+    #             pass  # Ignore errors and continue
+
     def execute_all_methods(self):
-        for method in [self.get_dishes_category, self.get_dishes_pos, self.get_drinks_pos]:
+        messages = []
+        error_occurred = False
+
+        sync_steps = [
+            (self.get_dishes_category, "Categories"),
+            (self.get_dishes_pos, "Dishes"),
+            (self.get_drinks_pos, "Drinks"),
+        ]
+
+        for method, label in sync_steps:
             try:
-                method()  # Call the method
-            except Exception:
-                pass  # Ignore errors and continue
+                result = method()
+                if result and isinstance(result, dict) and result.get('type') == 'ir.actions.client':
+                    msg = result.get('params', {}).get('message', 'Completed.')
+                    msg_type = result.get('params', {}).get('type', 'success')
+
+                    if msg_type == 'danger':
+                        error_occurred = True
+                        emoji = '❌'
+                    elif msg_type == 'warning':
+                        emoji = '⚠️'
+                    else:
+                        emoji = '✅'
+
+                    messages.append(f"{label}: {msg} {emoji}")
+                else:
+                    messages.append(f"✅ {label}: Completed with no message.")
+            except Exception as e:
+                error_occurred = True
+                messages.append(f"❌ {label}: Exception occurred - {str(e)}")
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Garista Sync Summary',
+                'message': '\n\n'.join(messages),
+                'type': 'danger' if error_occurred else 'success',
+                'sticky': error_occurred,
+            }
+        }
+
+

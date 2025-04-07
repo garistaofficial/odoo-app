@@ -2,7 +2,7 @@ from odoo import models, api
 import json
 import requests
 from datetime import datetime
-from tzlocal import get_localzone
+# from tzlocal import get_localzone
 
 class GaristaSync(models.Model):
     _name = 'garista.sync'
@@ -52,10 +52,10 @@ class GaristaSync(models.Model):
             # Add date_order only if it's provided
             if date_order:
                 # Get system timezone dynamically
-                local_tz = get_localzone()
-                print("local_tz",local_tz)
-                tz_abbr = datetime.now(local_tz).strftime("%Z")  # Get timezone abbreviation (e.g., "PKT", "EST")
-
+                # local_tz = get_localzone()
+                # print("local_tz",local_tz)
+                # tz_abbr = datetime.now(local_tz).strftime("%Z")  # Get timezone abbreviation (e.g., "PKT", "EST")
+                tz_abbr = 'UTC'
                 # Format date_order and append timezone
                 order_timestamp_with_tz = f"{date_order} - {tz_abbr}"
                 data["order_timestamp"] = order_timestamp_with_tz  # Add date_order to payload
