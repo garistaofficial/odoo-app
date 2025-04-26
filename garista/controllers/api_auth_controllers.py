@@ -53,11 +53,10 @@ class APIAuthController(http.Controller):
                 'message': 'Username, password, and token are required to generate an API token'
             }
 
-        garista = request.env['garista.garista'].sudo().search([('api_email', '=', username)], limit=1)
+        garista = request.env['garista.garista'].sudo().search([('username', '=', username)], limit=1)
 
         if garista.api_password == password and garista.token == token:
-            if garista.api_token:
-                return {
+             return {
                     'status': 'success',
                     'message': 'Existing API token found',
                     'api_token': garista.api_token
@@ -68,8 +67,7 @@ class APIAuthController(http.Controller):
                 'message': 'Please Login First on Odoo with you Garista Credentials, then try again ',
                 'api_token': token
             }
-            # token = garista.generate_token()
-            # garista.sudo().write({'api_token': token})
+
         else:
             return {
                 'status': 'error',
