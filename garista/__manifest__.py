@@ -13,8 +13,6 @@ Features:
     'author': "Garista Team",
     'website': "https://www.garista.net/",
     'category': 'Point of Sale',
-    'support': 'hello@garista.com',
-    'version': '1.0',
     
     # Web icon for the dashboard
     'icon': '/garista/static/description/icon.png',
@@ -31,7 +29,6 @@ Features:
     
     # Always loaded data files
     'data': [
-        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
         'views/url_setting.xml',
@@ -44,9 +41,6 @@ Features:
     'demo': [
         'demo/demo.xml',
     ],
-    
-    # License
-    'license': 'LGPL-3',
 
     # Installation settings
     'installable': True,
